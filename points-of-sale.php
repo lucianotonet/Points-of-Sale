@@ -3,13 +3,13 @@
 /**
  * POINTS OF SALE
  *
- * @link              http://lucianotonet.com
+ * @link              https://github.com/tonetlds/Points-of-Sale
  * @since             1.0.0
  * @package           Points_Of_Sale
  *
  * @wordpress-plugin
  * Plugin Name:       Points Of Sale
- * Plugin URI:        http://lucianotonet.com/points-of-sale-uri/
+ * Plugin URI:        https://github.com/tonetlds/Points-of-Sale
  * Description:       Simple Google maps integration that display the points of sale where your costumers can buy your products.
  * Version:           1.0.0
  * Author:            Luciano Tonet

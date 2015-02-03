@@ -180,8 +180,8 @@ class Points_Of_Sale {
 	 *
 	 * @since    1.0.0
 	 */
-	public function run() {
-		$this->loader->run();
+	public function run() {		
+		$this->loader->run();		
 	}
 
 	/**
@@ -214,5 +214,6 @@ class Points_Of_Sale {
 	public function get_version() {
 		return $this->version;
 	}
+
 
 }
