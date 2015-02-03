@@ -1,0 +1,320 @@
+{
+  "Porto Alegre": {
+    "name": "Porto Alegre",
+    "neighborhoods": {
+      "Rio Branco": {
+        "name": "Rio Branco",
+        "coordinates": "-30.0329104,-51.201683900000035",
+        "total-stores": 2
+      },
+      "Teresópolis": {
+        "name": "Teresópolis",
+        "coordinates": "-30.0851747,-51.20429960000001",
+        "total-stores": 1
+      },
+      "Bom Fim": {
+        "name": "Bom Fim",
+        "coordinates": "-30.031663,-51.21214740000005",
+        "total-stores": 4
+      },
+      "Moinhos de Vento": {
+        "name": "Moinhos de Vento",
+        "coordinates": "-30.02480559999999,-51.20299180000001",
+        "total-stores": 5
+      },
+      "Navegantes": {
+        "name": "Navegantes",
+        "coordinates": "-30.0003448,-51.20299180000001",
+        "total-stores": 1
+      },
+      "Floresta": {
+        "name": "Floresta",
+        "coordinates": "-30.0168433,-51.20822339999995",
+        "total-stores": 5
+      },
+      "Nonoai": {
+        "name": "Nonoai",
+        "coordinates": "-30.0938586,-51.21868800000004",
+        "total-stores": 1
+      },
+      "Centro Historico": {
+        "name": "Centro Historico",
+        "coordinates": "-30.0285908,-51.228059900000005",
+        "total-stores": 6
+      },
+      "Cidade Baixa": {
+        "name": "Cidade Baixa",
+        "coordinates": "-30.0401989,-51.22261270000001",
+        "total-stores": 15
+      },
+      "Passo D'Areia": {
+        "name": "Passo D'Areia",
+        "coordinates": "-30.0117699,-51.16988229999998",
+        "total-stores": 3
+      },
+      "Petrópolis": {
+        "name": "Petrópolis",
+        "coordinates": "-30.0443102,-51.18637749999999",
+        "total-stores": 3
+      },
+      "Vila Jardim": {
+        "name": "Vila Jardim",
+        "coordinates": "-30.0310268,-51.150698499999976",
+        "total-stores": 1
+      },
+      "Boa Vista": {
+        "name": "Boa Vista",
+        "coordinates": "-30.0332449,-51.18860689999997",
+        "total-stores": 2
+      },
+      "São João": {
+        "name": "São João",
+        "coordinates": "-29.9878808,-51.17422520000002",
+        "total-stores": 3
+      },
+      "Independência": {
+        "name": "Independência",
+        "coordinates": "-30.0283992,-51.21221220000001",
+        "total-stores": 2
+      },
+      "Vila Ipiranga": {
+        "name": "Vila Ipiranga",
+        "coordinates": "-30.0212481,-51.150698499999976",
+        "total-stores": 3
+      },
+      "Tristeza": {
+        "name": "Tristeza",
+        "coordinates": "-30.1096916,-51.25009190000003",
+        "total-stores": 2
+      },
+      "Menino Deus": {
+        "name": "Menino Deus",
+        "coordinates": "-30.0565534,-51.223920899999996",
+        "total-stores": 2
+      },
+      "Sarandi": {
+        "name": "Sarandi",
+        "coordinates": "-29.995928,-51.127180299999964",
+        "total-stores": 1
+      },
+      "Medianeira": {
+        "name": "Medianeira",
+        "coordinates": "-30.065374,-51.21242240000004",
+        "total-stores": 1
+      },
+      "Anchieta": {
+        "name": "Anchieta",
+        "coordinates": "-29.976414,-51.17904199999998",
+        "total-stores": 1
+      },
+      "Auxiliadora": {
+        "name": "Auxiliadora",
+        "coordinates": "-30.0211612,-51.19252970000002",
+        "total-stores": 1
+      },
+      "Praia de Belas": {
+        "name": "Praia de Belas",
+        "coordinates": "-30.0423572,-51.233274800000004",
+        "total-stores": 2
+      }
+    },
+    "total-stores": 67
+  },
+  "Esteio": {
+    "name": "Esteio",
+    "neighborhoods": {
+      "Centro": {
+        "name": "Centro",
+        "coordinates": "-29.8487628,-51.1611537",
+        "total-stores": 1
+      }
+    },
+    "total-stores": 1
+  },
+  "Ivoti": {
+    "name": "Ivoti",
+    "neighborhoods": {
+      "Centro": {
+        "name": "Centro",
+        "coordinates": "-29.5944018,-51.1605002",
+        "total-stores": 1
+      }
+    },
+    "total-stores": 1
+  },
+  "São Leopoldo": {
+    "name": "São Leopoldo",
+    "neighborhoods": {
+      "Centro": {
+        "name": "Centro",
+        "coordinates": "-29.7667917,-51.150698499999976",
+        "total-stores": 2
+      },
+      "São Borja": {
+        "name": "São Borja",
+        "coordinates": "-29.7960493,-51.101058999999964",
+        "total-stores": 2
+      }
+    },
+    "total-stores": 4
+  },
+  "Novo Hamburgo": {
+    "name": "Novo Hamburgo",
+    "neighborhoods": {
+      "Hamburgo Velho": {
+        "name": "Hamburgo Velho",
+        "coordinates": "-29.6765059,-51.11281220000001",
+        "total-stores": 4
+      }
+    },
+    "total-stores": 4
+  },
+  "Bento Gonçalves": {
+    "name": "Bento Gonçalves",
+    "neighborhoods": {
+      "Centro": {
+        "name": "Centro",
+        "coordinates": "-29.164506,-51.51553819999998",
+        "total-stores": 2
+      }
+    },
+    "total-stores": 2
+  },
+  "Pelotas": {
+    "name": "Pelotas",
+    "neighborhoods": {
+      "Areal": {
+        "name": "Areal",
+        "coordinates": "-31.760925,-52.3244191",
+        "total-stores": 1
+      }
+    },
+    "total-stores": 1
+  },
+  "Cachoeirinha": {
+    "name": "Cachoeirinha",
+    "neighborhoods": {
+      "Centro": {
+        "name": "Centro",
+        "coordinates": "-29.9477228,-51.10211659999999",
+        "total-stores": 2
+      }
+    },
+    "total-stores": 2
+  },
+  "Caxias do Sul": {
+    "name": "Caxias do Sul",
+    "neighborhoods": {
+      "Desvio Rizzo": {
+        "name": "Desvio Rizzo",
+        "coordinates": "-29.1953749,-51.23700510000003",
+        "total-stores": 1
+      },
+      "Rio Branco": {
+        "name": "Rio Branco",
+        "coordinates": "-29.1793772,-51.19383740000001",
+        "total-stores": 1
+      }
+    },
+    "total-stores": 2
+  },
+  "Gravataí": {
+    "name": "Gravataí",
+    "neighborhoods": {
+      "Passo Das Pedras": {
+        "name": "Passo Das Pedras",
+        "coordinates": "-29.9536501,-50.99928729999999",
+        "total-stores": 1
+      }
+    },
+    "total-stores": 1
+  },
+  "Passo Fundo": {
+    "name": "Passo Fundo",
+    "neighborhoods": {
+      "Centro": {
+        "name": "Centro",
+        "coordinates": "-28.2607963,-52.417244900000014",
+        "total-stores": 1
+      }
+    },
+    "total-stores": 1
+  },
+  "Bagé": {
+    "name": "Bagé",
+    "neighborhoods": {
+      "Centro": {
+        "name": "Centro",
+        "coordinates": "-31.3285393,-54.10931110000001",
+        "total-stores": 2
+      }
+    },
+    "total-stores": 2
+  },
+  "Canela": {
+    "name": "Canela",
+    "neighborhoods": {
+      "Centro": {
+        "name": "Centro",
+        "coordinates": "-29.363338,-50.810526100000004",
+        "total-stores": 1
+      }
+    },
+    "total-stores": 1
+  },
+  "Montenegro": {
+    "name": "Montenegro",
+    "neighborhoods": {
+      "Centro": {
+        "name": "Centro",
+        "coordinates": "-29.6829126,-51.468415300000004",
+        "total-stores": 1
+      }
+    },
+    "total-stores": 1
+  },
+  "Campo Bom": {
+    "name": "Campo Bom",
+    "neighborhoods": {
+      "Centro": {
+        "name": "Centro",
+        "coordinates": "-29.6751942,-51.06110990000002",
+        "total-stores": 1
+      }
+    },
+    "total-stores": 1
+  },
+  "Torres": {
+    "name": "Torres",
+    "neighborhoods": {
+      "Centro": {
+        "name": "Centro",
+        "coordinates": "-29.3344085,-49.72398129999999",
+        "total-stores": 1
+      }
+    },
+    "total-stores": 1
+  },
+  "Santa Maria": {
+    "name": "Santa Maria",
+    "neighborhoods": {
+      "Centro": {
+        "name": "Centro",
+        "coordinates": "-29.6873064,-53.81547690000002",
+        "total-stores": 2
+      }
+    },
+    "total-stores": 2
+  },
+  "Nova Petrópolis": {
+    "name": "Nova Petrópolis",
+    "neighborhoods": {
+      "Nova Petrópolis ": {
+        "name": "Nova Petrópolis ",
+        "coordinates": "-29.3756264,-51.111223499999994",
+        "total-stores": 1
+      }
+    },
+    "total-stores": 1
+  }
+}
