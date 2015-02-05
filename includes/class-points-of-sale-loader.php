@@ -185,7 +185,7 @@ class Points_Of_Sale_Loader {
 			'has_archive'         => true,
 			'exclude_from_search' => false,
 			'publicly_queryable'  => true,
-			'capability_type'     => 'page',
+			'capability_type'     => 'post',
 		);
 		register_post_type( 'point_of_sale', $args );
 
