@@ -118,7 +118,13 @@ class Points_Of_Sale {
 		 * The class responsible for defining all actions that occur in the public-facing
 		 * side of the site.
 		 */
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/class-points-of-sale-public.php';				
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/class-points-of-sale-public.php';		
+
+		/**
+		 * The class responsible for defining all meta boxes		 
+		 */
+		//require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/meta-box/meta-box.php';
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/TGM-Plugin-Activation/class-tgm-plugin-activation.php';		
 
 
 		$this->loader = new Points_Of_Sale_Loader();
@@ -156,6 +162,17 @@ class Points_Of_Sale {
 
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_styles' );
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts' );
+
+		// Hook into the 'init' action
+		$this->loader->add_action( 'init', $plugin_admin, 'register_pos_cpt' );        	
+		$this->loader->add_action( 'init', $plugin_admin, 'pos_meta_boxes' ); 
+
+        //$this->loader->add_filter( 'cmb_meta_boxes', $plugin_admin, 'pos_meta_boxes' );
+        
+        //$this->loader->add_action( 'init', $plugin_admin, 'initialize_pos_meta_boxes', 9 );   
+
+        //Add map option to metaboxes
+        $this->loader->add_action( 'cmb_render_map', $plugin_admin, 'pos_render_map', 10, 2 );           
 
 	}
 
