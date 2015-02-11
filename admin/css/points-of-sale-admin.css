@@ -38,7 +38,8 @@
     min-width: 70%;
 }
 
-.rwmb-label {
+#pos_details_metabox .rwmb-label {
+	width: 20%;
 	text-align: right;
 	padding: 0px;
 	margin-right: 10px;
