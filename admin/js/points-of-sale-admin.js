@@ -96,12 +96,9 @@
 		    }
 
 		    var latLng = new google.maps.LatLng(lat, lon);
-		    map.setCenter(latLng); 
+		    map.setCenter(latLng); 		   
 
-		    //console.log( latLng );
-
-
-		    var image = '/onde-encontrar/images/mapMark.png';
+		    var image = pos_locationpicker_data.defaultEditMapMarker ;
 		
 		    var marker = new google.maps.Marker({
 		        position: latLng,

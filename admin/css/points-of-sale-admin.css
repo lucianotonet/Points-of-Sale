@@ -17,8 +17,6 @@
     font-size: 16px;
     font-weight: 300;
     text-overflow: ellipsis;
-  }
-#pos_search_address {
 	margin: 14px;
 	padding: 10px;  /* Regular padding-left + 1. */
 	width: 450px;

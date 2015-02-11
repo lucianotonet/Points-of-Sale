@@ -119,13 +119,15 @@ class Points_Of_Sale_Admin {
             wp_enqueue_script( 'pos_google_maps', 'http://maps.googleapis.com/maps/api/js?sensor=true&libraries=places' . $languageString);
         }
 
-		wp_enqueue_script( 'pos_locationpicker', plugin_dir_url( __FILE__ ) . 'js/locationpicker.jquery.min.js', array( 'jquery' ), $this->version, false  );			
-
-        // wp_localize_script( $this->plugin_name, 'pos_map_data', array(
-        //                    												'alert' => "Funcionandooo."
-
-        //                    												));
+		wp_enqueue_script( 'pos_locationpicker', plugin_dir_url( __FILE__ ) . 'js/locationpicker.jquery.min.js', array( 'jquery' ), $this->version, false  );			        
 		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/points-of-sale-admin.js', array( 'pos_google_maps', 'jquery' ), $this->version, false );
+
+		wp_localize_script( $this->plugin_name, 'pos_locationpicker_data', $this->pos_localize_script() );
+
+		// echo "<pre>";
+		// print_r($this->plugin_name);
+		// echo "</pre>";
+		// exit;
 
 		
 	}
@@ -174,7 +176,7 @@ class Points_Of_Sale_Admin {
 	        // You can add more plugins here if you want
 	    );
 	    $config  = array(
-	        'domain'           => 'points-of-sale',
+	        'domain'           => 'points_of_sale',
 	        'default_path'     => '',
 	        'parent_menu_slug' => 'themes.php',
 	        'parent_url_slug'  => 'themes.php',
@@ -214,7 +216,7 @@ class Points_Of_Sale_Admin {
      *
      * Register "Point Of Sale" Custom Post Type */
 
-	public function register_pos_cpt() {
+	public function pos_register_cpt() {
 
 		$labels = array(
 			'name'                => _x( 'Pontos de Venda', 'Post Type General Name', 'points_of_sale' ),
@@ -230,7 +232,7 @@ class Points_Of_Sale_Admin {
 			'search_items'        => __( 'Buscar Ponto de Venda', 'points_of_sale' ),
 			'not_found'           => __( 'Nada encontrado', 'points_of_sale' ),
 			'not_found_in_trash'  => __( 'Nada encontrado no lixo', 'points_of_sale' ),
-		);
+		);		
 		$args = array(
 			'label'               => __( 'points_of_sale', 'points_of_sale' ),
 			'description'         => __( 'Pontos de venda onde os seus clientes encontram os seus produtos', 'points_of_sale' ),
@@ -248,7 +250,7 @@ class Points_Of_Sale_Admin {
 			'has_archive'         => true,
 			'exclude_from_search' => false,
 			'publicly_queryable'  => true,
-			'capability_type'     => 'edit_posts',
+			'capability_type'     => 'post',
 		);
 		register_post_type( 'point_of_sale', $args );
 
@@ -262,10 +264,10 @@ class Points_Of_Sale_Admin {
 	 * @param  array $meta_boxes
 	 * @return array
 	 */
-	public function pos_meta_boxes( array $meta_boxes ) {
+	public function pos_register_meta_boxes( $meta_boxes ) {
 
 		// echo "<pre>";
-		// print_r( $this->post_types_to_use );
+		// print_r( $meta_boxes );
 		// echo "</pre>";
 		// exit;
 
@@ -277,9 +279,9 @@ class Points_Of_Sale_Admin {
 		/**
 		 * Sample metabox to demonstrate each field type included
 		 */
-		$meta_boxes['test_metabox'] = array(
+		$meta_boxes[ 'pos_metabox' ] = array(
 			'id'         => 'details_metabox',
-			'title'      => __( 'Detalhes do Ponto de Venda', 'points-of-sale' ),
+			'title'      => __( 'Detalhes do Ponto de Venda', 'points_of_sale' ),
 			'pages'      => $this->post_types_to_use, // Post type
 			'context'    => 'normal',
 			'priority'   => 'high',
@@ -288,9 +290,9 @@ class Points_Of_Sale_Admin {
 			'fields'     => array(
 			    array(
                         // 'name' 	=> __('Local','points-of-sale'),
-                        'desc' 	=> __('Location picker','points-of-sale'),
-                        'id' 	=> $prefix . 'map',
-                        'type' 	=> 'map'),				
+                        //'desc' 	=> __('Location picker','points_of_sale'),
+                        'id' 	=> $prefix . 'location_picker',
+                        'type' 	=> 'pos_location_picker'),				
 			    array(
                 		'name' => __('Estado','points_of_sale'),                		
                 		'id'   => $prefix . 'state',
@@ -327,7 +329,7 @@ class Points_Of_Sale_Admin {
                 array(
 						'name' => __( 'Marcador', 'points_of_sale' ),						
 						'id'   => $prefix . 'marker',
-						'type' => 'file'),
+						'type' => 'image_advanced'),
                 
                 array(
                 		'name' => __('Latitude','points_of_sale'),                		
@@ -360,30 +362,32 @@ class Points_Of_Sale_Admin {
 
 
 
-	/***********************************
-	* 	INITIALIZE META BOXES of POINTS OF SALE
-	*
-	*/
-	//public function initialize_pos_meta_boxes(){
-		/**
-		 * Initialize the metabox class.
-		 */	
-	// 	if ( ! class_exists( 'cmb_Meta_Box' ) )
-	// 	require_once plugin_dir_path( dirname( __FILE__ ) ) . 'metaboxes/init.php';	
-	// }	
+	public function pos_localize_script(){
+		// echo "AQUI";
+		// exit;
 
 
-	/***********************************
-	* 	RENDERIZE MAP LOCATION PICKER
-	*
-	*/
-	public function pos_render_map( $field, $meta ) {
+		global $post;
 
         //Get start position	        
         $defaultEditMapLocationLat 	= '-28.3043001';	        
         $defaultEditMapLocationLong = '-52.3880269';	        
         $defaultEditMapZoom 		= '16';
-        $defaultEditMapMarker 		= plugin_dir_path( __FILE__ ) . "assets/pos-marker.png";        
+        // $defaultEditMapMarker 		= plugin_dir_path( __FILE__ ) ) . "assets/pos-marker.png";        
+		$defaultEditMapMarker 		= plugin_dir_url( dirname( __FILE__ ) ) . "assets/pos-marker.png";     
+		
+
+		$markers = rwmb_meta( '_pos_marker', 'type=image_advanced', $post->ID );
+		
+		// echo "<pre>";
+		// print_r( $markers );
+		// echo "</pre>";
+		// exit;
+
+		if( !empty( $markers ) and is_array( $markers ) ){			
+			$marker 			  = end( $markers );
+			$defaultEditMapMarker = $marker['full_url'];
+		}
 
         if($defaultEditMapLocationLat == '' || $defaultEditMapLocationLong == ''){
             $defaultEditMapLocationLat = '40.3';
@@ -395,22 +399,17 @@ class Points_Of_Sale_Admin {
         }
 
         if($defaultEditMapMarker == '' ){
-            $defaultEditMapMarker = plugin_dir_path( dirname( __FILE__ ) ) . "assets/pos-marker.png";
+            $defaultEditMapMarker = plugin_dir_path( __FILE__ ) . "assets/pos-marker.png";
         }
 
-        // wp_localize_script( 'pos_google_maps', 'maplocationdata', array(
-        //                    													'defaultEditMapLocationLat'  => $defaultEditMapLocationLat,
-        //                    													'defaultEditMapLocationLong' => $defaultEditMapLocationLong,
-        //                    													'defaultEditMapZoom'		 => $defaultEditMapZoom,
-        //                    													'defaultEditMapMarker'		 => $defaultEditMapMarker
-
-        //                    												));
-
-        //Display the map
-        echo '<input id="pos_search_address" class="controls" type="text" placeholder="' . __('Pesquisar endereço...','points-of-sale') . '">';
-        //echo '<input type="text" value="" aria-required="true" id="_pos_locationpicker" placeholder="' . __('Digite um endereço','points-of-sale') . '" autocomplete="off"> <br />';
-        echo '<div id="pos_locationpicker"></div>';
-        // echo '<a style="margin-right: 17px;float: right;margin-top: 10px;" class="button" id="UpdateMap" href="#">' . __('Update','maplistpro') . '</a>';
-      
-    }
+        $data = array(
+					'defaultEditMapLocationLat'  => $defaultEditMapLocationLat,
+					'defaultEditMapLocationLong' => $defaultEditMapLocationLong,
+					'defaultEditMapZoom'		 => $defaultEditMapZoom,
+					'defaultEditMapMarker'		 => $defaultEditMapMarker
+				);
+        return $data;
+        
+	}
+    
 }

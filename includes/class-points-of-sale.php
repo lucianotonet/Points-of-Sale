@@ -108,6 +108,12 @@ class Points_Of_Sale {
 		 * of the plugin.
 		 */
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-points-of-sale-i18n.php';
+		
+		/**
+		 * The class responsible for defining all meta boxes		 
+		 */
+		//require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/meta-box/meta-box.php';
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/TGM-Plugin-Activation/class-tgm-plugin-activation.php';		
 
 		/**
 		 * The class responsible for defining all actions that occur in the Dashboard.
@@ -120,11 +126,13 @@ class Points_Of_Sale {
 		 */
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/class-points-of-sale-public.php';		
 
+
 		/**
-		 * The class responsible for defining all meta boxes		 
+		 * The class responsible for defining all actions that occur in the public-facing
+		 * side of the site.
 		 */
-		//require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/meta-box/meta-box.php';
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/TGM-Plugin-Activation/class-tgm-plugin-activation.php';		
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-rwmb-pos-location-picker-field.php';		
+
 
 
 		$this->loader = new Points_Of_Sale_Loader();
@@ -162,18 +170,18 @@ class Points_Of_Sale {
 
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_styles' );
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts' );
+        
+        $this->loader->add_action( 'tgmpa_register', $plugin_admin, 'pos_register_required_plugins' );
 
 		// Hook into the 'init' action
-		$this->loader->add_action( 'init', $plugin_admin, 'register_pos_cpt' );        	
-		$this->loader->add_action( 'init', $plugin_admin, 'pos_meta_boxes' ); 
-
-        //$this->loader->add_filter( 'cmb_meta_boxes', $plugin_admin, 'pos_meta_boxes' );
+		$this->loader->add_action( 'init', $plugin_admin, 'pos_register_cpt' );        	
+		// $this->loader->add_filter( 'cmb_meta_boxes', $plugin_admin, 'register_pos_meta_boxes', 9 );	
+		$this->loader->add_filter( 'rwmb_meta_boxes', $plugin_admin, 'pos_register_meta_boxes' );
+		//$this->loader->add_action( 'init', $plugin_admin, 'register_pos_meta_boxes' ); 
         
-        //$this->loader->add_action( 'init', $plugin_admin, 'initialize_pos_meta_boxes', 9 );   
+        $this->loader->add_action( 'rwmb_render_map', $plugin_admin, 'pos_render_map', 10, 2 );           
 
-        //Add map option to metaboxes
-        $this->loader->add_action( 'cmb_render_map', $plugin_admin, 'pos_render_map', 10, 2 );           
-
+              
 	}
 
 	/**
@@ -188,7 +196,7 @@ class Points_Of_Sale {
 		$plugin_public = new Points_Of_Sale_Public( $this->get_plugin_name(), $this->get_version() );
 
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_styles' );
-		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_scripts' );
+		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_scripts' );		
 
 	}
 
