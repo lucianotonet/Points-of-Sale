@@ -280,7 +280,7 @@ class Points_Of_Sale_Admin {
 		 * Sample metabox to demonstrate each field type included
 		 */
 		$meta_boxes[ 'pos_metabox' ] = array(
-			'id'         => 'details_metabox',
+			'id'         => 'pos_details_metabox',
 			'title'      => __( 'Detalhes do Ponto de Venda', 'points_of_sale' ),
 			'pages'      => $this->post_types_to_use, // Post type
 			'context'    => 'normal',
