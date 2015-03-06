@@ -36,6 +36,7 @@
     padding: 10px;  /* Regular padding-left + 1. */
 	
     min-width: 70%;
+    border-radius: 2px;
 }
 
 #pos_details_metabox .rwmb-label {
