@@ -127,14 +127,6 @@ class Points_Of_Sale {
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/class-points-of-sale-public.php';		
 
 
-		/**
-		 * The class responsible for defining all actions that occur in the public-facing
-		 * side of the site.
-		 */
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-rwmb-pos-location-picker-field.php';		
-
-
-
 		$this->loader = new Points_Of_Sale_Loader();
 
 	}
@@ -168,20 +160,32 @@ class Points_Of_Sale {
 
 		$plugin_admin = new Points_Of_Sale_Admin( $this->get_plugin_name(), $this->get_version() );
 
+
+		// $this->loader->add_action( 'wp_ajax_nopriv_getlocations', $plugin_admin, 'getlocations_callback' );
+		$this->loader->add_action( 'wp_ajax_getlocations', $plugin_admin, 'getlocations_callback' );
+
+		
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_styles' );
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts' );
         
-        $this->loader->add_action( 'tgmpa_register', $plugin_admin, 'pos_register_required_plugins' );
-
 		// Hook into the 'init' action
-		$this->loader->add_action( 'init', $plugin_admin, 'pos_register_cpt' );        	
-		// $this->loader->add_filter( 'cmb_meta_boxes', $plugin_admin, 'register_pos_meta_boxes', 9 );	
+		$this->loader->add_action( 'init', $plugin_admin, 'pos_register_cpt' );        			
+		
+		$this->loader->add_action( 'tgmpa_register', $plugin_admin, 'pos_register_required_plugins' );
+		
 		$this->loader->add_filter( 'rwmb_meta_boxes', $plugin_admin, 'pos_register_meta_boxes' );
-		//$this->loader->add_action( 'init', $plugin_admin, 'register_pos_meta_boxes' ); 
-        
-        $this->loader->add_action( 'rwmb_render_map', $plugin_admin, 'pos_render_map', 10, 2 );           
 
-              
+		$this->loader->add_action( 'admin_init', $this, 'pos_register_poslocationpicker_field' );
+          
+	}
+
+	
+	/**
+	 * The class responsible for defining all actions that occur in the public-facing
+	 * side of the site.
+	 */
+	public function pos_register_poslocationpicker_field(){
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-poslocationpicker-field.php';
 	}
 
 	/**
@@ -195,8 +199,16 @@ class Points_Of_Sale {
 
 		$plugin_public = new Points_Of_Sale_Public( $this->get_plugin_name(), $this->get_version() );
 
+		// return $_SERVER['REQUEST_METHOD'];
+
+		//$this->loader->add_action( 'wp_ajax_nopriv_get_locations', $plugin_public, 'points_of_sale_request_handler' );
+		// add_action( 'wp_ajax_getlocations', $plugin_public, 'pos_locations_response' );
+
+
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_styles' );
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_scripts' );		
+
+		$this->loader->add_action( 'init',  $plugin_public, 'register_points_of_sale_shortcode' );
 
 	}
 

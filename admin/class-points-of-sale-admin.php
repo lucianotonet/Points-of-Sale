@@ -124,11 +124,6 @@ class Points_Of_Sale_Admin {
 
 		wp_localize_script( $this->plugin_name, 'pos_locationpicker_data', $this->pos_localize_script() );
 
-		// echo "<pre>";
-		// print_r($this->plugin_name);
-		// echo "</pre>";
-		// exit;
-
 		
 	}
 
@@ -266,13 +261,7 @@ class Points_Of_Sale_Admin {
 	 */
 	public function pos_register_meta_boxes( $meta_boxes ) {
 
-		// echo "<pre>";
-		// print_r( $meta_boxes );
-		// echo "</pre>";
-		// exit;
-
-
-
+	
 		// Start with an underscore to hide fields from custom fields list
 		$prefix = '_pos_';
 
@@ -288,11 +277,9 @@ class Points_Of_Sale_Admin {
 			'show_names' => true, // Show field names on the left
 			// 'cmb_styles' => true, // Enqueue the CMB stylesheet on the frontend
 			'fields'     => array(
-			    array(
-                        // 'name' 	=> __('Local','points-of-sale'),
-                        //'desc' 	=> __('Location picker','points_of_sale'),
+			    array(                        
                         'id' 	=> $prefix . 'location_picker',
-                        'type' 	=> 'pos_location_picker'),				
+                        'type' 	=> 'poslocationpicker'),				
 			    array(
                 		'name' => __('Estado','points_of_sale'),                		
                 		'id'   => $prefix . 'state',
@@ -339,16 +326,7 @@ class Points_Of_Sale_Admin {
                 		'name' => __('Longitude','points_of_sale'),                		
                 		'id' => $prefix . 'longitude',
                 		'type' => 'text'),    
-                // array(
-                // 		'name' => __('Descrição','points_of_sale'),                		
-                // 		'id' => $prefix . 'content',
-                // 		'type' => 'textarea_small'),
-     //            array(
-					// 	'name' => __( 'Marcador', 'points_of_sale' ),						
-					// 	'id'   => $prefix . 'marker',
-					// 	'type' => 'file',
-					// ),
-   				
+                   				
 			),
 		);
 		
@@ -360,13 +338,8 @@ class Points_Of_Sale_Admin {
 
 
 
-
-
 	public function pos_localize_script(){
-		// echo "AQUI";
-		// exit;
-
-
+		
 		global $post;
 
         //Get start position	        
@@ -411,5 +384,138 @@ class Points_Of_Sale_Admin {
         return $data;
         
 	}
-    
+
+
+
+	public function getlocations_callback() {
+
+		// if( $_SERVER['REQUEST_METHOD'] == 'post' && isset($_POST['position']) ){
+			
+		global $wpdb;
+
+		//return $_SERVER['REQUEST_METHOD'];
+		// return json_encode('FEito');
+		// exit;
+
+
+		$position = explode(',', $_POST['position']);		
+
+		$lat = $position[0];
+		$lng = $position[1];
+		$radius = "1";
+
+		
+		$queryProximity = 	"SELECT *,
+
+			        pm1.meta_value as _pos_state, 
+			        pm2.meta_value as _pos_city,
+			        pm3.meta_value as _pos_neighborhood, 		        
+			        pm7.meta_value as _pos_latitude, 
+		        	pm8.meta_value as _pos_longitude,
+
+		        	6371 * acos( cos( radians({$lat}) ) * cos( radians( pm7.meta_value ) ) * cos( radians ( pm8.meta_value ) - radians($lng) ) + sin( radians({$lat}) ) * sin( radians ( pm7.meta_value ) ) )  as 'distance'
+
+					FROM ".$wpdb->base_prefix."posts 
+
+					LEFT JOIN ".$wpdb->base_prefix."postmeta AS pm1 ON (".$wpdb->base_prefix."posts.ID = pm1.post_id AND pm1.meta_key='_pos_state') 
+					LEFT JOIN ".$wpdb->base_prefix."postmeta AS pm2 ON (".$wpdb->base_prefix."posts.ID = pm2.post_id AND pm2.meta_key='_pos_city')
+					LEFT JOIN ".$wpdb->base_prefix."postmeta AS pm3 ON (".$wpdb->base_prefix."posts.ID = pm3.post_id AND pm3.meta_key='_pos_neighborhood')				
+			        LEFT JOIN ".$wpdb->base_prefix."postmeta AS pm7 ON (".$wpdb->base_prefix."posts.ID = pm7.post_id AND pm7.meta_key='_pos_latitude')
+		        	LEFT JOIN ".$wpdb->base_prefix."postmeta AS pm8 ON (".$wpdb->base_prefix."posts.ID = pm8.post_id AND pm8.meta_key='_pos_longitude')
+
+					WHERE ".$wpdb->base_prefix."posts.post_type = 'point_of_sale' 
+					AND ".$wpdb->base_prefix."posts.post_status = 'publish' 
+
+					HAVING distance < {$radius}							
+
+					ORDER BY distance ASC";
+		
+		$city = $wpdb->get_results( $queryProximity, ARRAY_A );
+	
+		$query = 	"SELECT *,
+
+			        pm1.meta_value as _pos_state, 
+			        pm2.meta_value as _pos_city,
+			        pm3.meta_value as _pos_neighborhood, 
+			        pm4.meta_value as _pos_street, 
+			        pm5.meta_value as _pos_number, 
+			        pm6.meta_value as _pos_postal_code, 		        
+			        pm7.meta_value as _pos_email, 
+			        pm8.meta_value as _pos_phone, 
+			        pm9.meta_value as _pos_marker,
+			        pm10.meta_value as _pos_latitude, 
+		        	pm11.meta_value as _pos_longitude
+					
+
+					FROM ".$wpdb->base_prefix."posts 
+
+
+					LEFT JOIN ".$wpdb->base_prefix."postmeta AS pm1 ON (".$wpdb->base_prefix."posts.ID = pm1.post_id AND pm1.meta_key='_pos_state') 
+					LEFT JOIN ".$wpdb->base_prefix."postmeta AS pm2 ON (".$wpdb->base_prefix."posts.ID = pm2.post_id AND pm2.meta_key='_pos_city')
+					LEFT JOIN ".$wpdb->base_prefix."postmeta AS pm3 ON (".$wpdb->base_prefix."posts.ID = pm3.post_id AND pm3.meta_key='_pos_neighborhood')
+					LEFT JOIN ".$wpdb->base_prefix."postmeta AS pm4 ON (".$wpdb->base_prefix."posts.ID = pm4.post_id AND pm4.meta_key='_pos_street')
+			        LEFT JOIN ".$wpdb->base_prefix."postmeta AS pm5 ON (".$wpdb->base_prefix."posts.ID = pm5.post_id AND pm5.meta_key='_pos_number')
+			        LEFT JOIN ".$wpdb->base_prefix."postmeta AS pm6 ON (".$wpdb->base_prefix."posts.ID = pm6.post_id AND pm6.meta_key='_pos_postal_code')
+			        LEFT JOIN ".$wpdb->base_prefix."postmeta AS pm7 ON (".$wpdb->base_prefix."posts.ID = pm7.post_id AND pm7.meta_key='_pos_email')
+			        LEFT JOIN ".$wpdb->base_prefix."postmeta AS pm8 ON (".$wpdb->base_prefix."posts.ID = pm8.post_id AND pm8.meta_key='_pos_phone')
+			        LEFT JOIN ".$wpdb->base_prefix."postmeta AS pm9 ON (".$wpdb->base_prefix."posts.ID = pm9.post_id AND pm9.meta_key='_pos_marker')
+			        LEFT JOIN ".$wpdb->base_prefix."postmeta AS pm10 ON (".$wpdb->base_prefix."posts.ID = pm10.post_id AND pm10.meta_key='_pos_latitude')
+		        	LEFT JOIN ".$wpdb->base_prefix."postmeta AS pm11 ON (".$wpdb->base_prefix."posts.ID = pm11.post_id AND pm11.meta_key='_pos_longitude')
+
+					WHERE ".$wpdb->base_prefix."posts.post_type = 'point_of_sale'";
+
+			
+			if( isset($city[0]['_pos_city'] ) AND !empty( $city[0]['_pos_city'] ) ){
+				if( !isset( $_POST['last_clicked'] ) || $_POST['last_clicked'] == 'states' ){				 
+					$query .= " AND pm1.meta_value 		 = '{$city[0]['_pos_state']}'";	
+				}else{
+					$query .= " AND pm2.meta_value 		 = '{$city[0]['_pos_city']}'";	
+				}
+			}
+
+
+			$query .= " AND ".$wpdb->base_prefix."posts.post_status = 'publish' 
+						ORDER BY pm2.meta_value ASC";
+
+		$results = $wpdb->get_results( $query, OBJECT );
+
+
+		if( count( $results ) > 0 ){
+			$response["success"] = true;
+			foreach ($results as $result) {
+
+
+				$content  = @$result->_pos_street . ", " . @$result->_pos_number . "<br/>";
+				$content .= @$result->_pos_city . " - " . @$result->_pos_state . "<br/>";
+				$content .= @$result->_pos_postal_code;
+
+				$more_info = array();
+				if( isset($result->_pos_phone) ){
+					$more_info[] = $result->_pos_phone;
+				}			
+				if( isset($result->_pos_email) ){
+					$more_info[] = $result->_pos_email;
+				}
+				$more_info = "<br/><small>".implode(' | ', $more_info)."</small>";
+
+				$response['markers'][] = array(
+								"name"		=> $result->post_title,
+								"content"	=> $content,
+								"more-info" => $more_info,
+								"icon_url"	=> $result->_pos_marker,
+							    "lat"		=> $result->_pos_latitude,
+							    "lng"		=> $result->_pos_longitude
+							);
+
+			}
+		}else{
+			$response = array( "success" => 'false', "message" => "Nada encontrado próximo ao endereço buscado." );
+		}	
+		
+		echo json_encode($response);
+
+		wp_die(); // this is required to terminate immediately and return a proper response
+	}
+
+
 }
