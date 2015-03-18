@@ -169,11 +169,19 @@ class Points_Of_Sale_Public {
 		$pdvs = $wpdb->get_results( $pdvs, ARRAY_A );
 
 		$total_stores = count($pdvs);
-
-		
+	
 		$states = $this->group_this_by( $pdvs, '_pos_state', '_pos_city', '_pos_neighborhood' );
 
-		require_once plugin_dir_path( __FILE__ ) . 'partials/points-of-sale-public-display.php';		
+		//turn on output buffering to capture script output
+		ob_start();
+		//include the specified file
+		include_once(plugin_dir_path( __FILE__ ) . 'partials/points-of-sale-public-display.php');			
+		//assign the file output to $content variable and clean buffer
+		$content = ob_get_clean();
+		//return the $content
+		//return is important for the output to appear at the correct position
+		//in the content
+		return $content;	
 									
 	}
 
