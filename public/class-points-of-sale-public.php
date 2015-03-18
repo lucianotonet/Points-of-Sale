@@ -144,7 +144,7 @@ class Points_Of_Sale_Public {
 					        pm4.meta_value as _pos_street, 
 					        pm5.meta_value as _pos_number, 
 					        pm6.meta_value as _pos_postal_code, 
-					        pm7.meta_value as _pos_email, 
+					        pm7.meta_value as _pos_more_info, 
 					        pm8.meta_value as _pos_latitude, 
 				        	pm9.meta_value as _pos_longitude
 
