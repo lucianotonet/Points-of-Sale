@@ -202,10 +202,12 @@
 
 				(function setup_map_pos() {
 					window.map_pos 						= new google.maps.Map($('#maps .map')[0], { disableDefaultUI: true });
-					window.map_pos.pinIconUrl 			= pos_data.assetsurl+'/images/pin.png';
-					window.map_pos.defaultIconUrl 		= pos_data.assetsurl+'/images/pos-marker.png';
+					window.map_pos.pinIconUrl 			= pos_data.assetsurl+'images/pin.png';
+					window.map_pos.defaultIconUrl 		= pos_data.assetsurl+'images/pos-marker.png';
 					window.map_pos.defaultZoom 			= 15;
 					window.map_pos.topLatitudeMargin 	= 0.04;
+
+
 
 					window.map_pos.infobox = new InfoBox ({
 						alignBottom: true,
@@ -232,6 +234,9 @@
 								var marker_latlng = new google.maps.LatLng(marker_data.lat, marker_data.lng);
 
 								bounds.extend(marker_latlng);
+
+								// console.log( marker_data.icon_url );
+								//console.log( map.defaultIconUrl );
 
 								marker = new google.maps.Marker ({
 									icon: marker_data.icon_url || map.defaultIconUrl,
@@ -293,6 +298,7 @@
 							map.pin.setMap(null);
 						}
 
+
 						if(pin_coordinates !== null) {
 							map.pin = new google.maps.Marker ({
 								icon: map.pinIconUrl,
@@ -303,6 +309,7 @@
 							map.setCenter(pin_coordinates);
 							map.setZoom(map.defaultZoom);
 						}
+						console.log( map );
 					};
 				})();
 

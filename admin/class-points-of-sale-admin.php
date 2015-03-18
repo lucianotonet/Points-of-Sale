@@ -307,24 +307,24 @@ class Points_Of_Sale_Admin {
 
                 array(
                 		'name' => __('E-mail','points_of_sale'),                		
-                		'id' => $prefix . 'email',
+                		'id'   => $prefix . 'email',
                 		'type' => 'text'),
                 array(
                 		'name' => __('Telefone','points_of_sale'),                		
-                		'id' => $prefix . 'phone',
+                		'id'   => $prefix . 'phone',
                 		'type' => 'text'),
                 array(
 						'name' => __( 'Marcador', 'points_of_sale' ),						
 						'id'   => $prefix . 'marker',
-						'type' => 'image_advanced'),
-                
+						'type' => 'image_advanced',
+                		'max_file_uploads' => 1),
                 array(
                 		'name' => __('Latitude','points_of_sale'),                		
                 		'id'   => $prefix . 'latitude',                		
                 		'type' => 'text'),
                 array(
                 		'name' => __('Longitude','points_of_sale'),                		
-                		'id' => $prefix . 'longitude',
+                		'id'   => $prefix . 'longitude',
                 		'type' => 'text'),    
                    				
 			),
@@ -381,6 +381,7 @@ class Points_Of_Sale_Admin {
 					'defaultEditMapZoom'		 => $defaultEditMapZoom,
 					'defaultEditMapMarker'		 => $defaultEditMapMarker
 				);
+
         return $data;
         
 	}
@@ -465,17 +466,17 @@ class Points_Of_Sale_Admin {
 					WHERE ".$wpdb->base_prefix."posts.post_type = 'point_of_sale'";
 
 			
-			if( isset($city[0]['_pos_city'] ) AND !empty( $city[0]['_pos_city'] ) ){
-				if( !isset( $_POST['last_clicked'] ) || $_POST['last_clicked'] == 'states' ){				 
-					$query .= " AND pm1.meta_value 		 = '{$city[0]['_pos_state']}'";	
-				}else{
-					$query .= " AND pm2.meta_value 		 = '{$city[0]['_pos_city']}'";	
-				}
+		if( isset($city[0]['_pos_city'] ) AND !empty( $city[0]['_pos_city'] ) ){
+			if( !isset( $_POST['last_clicked'] ) || $_POST['last_clicked'] == 'states' ){				 
+				$query .= " AND pm1.meta_value 		 = '{$city[0]['_pos_state']}'";	
+			}else{
+				$query .= " AND pm2.meta_value 		 = '{$city[0]['_pos_city']}'";	
 			}
+		}
 
 
-			$query .= " AND ".$wpdb->base_prefix."posts.post_status = 'publish' 
-						ORDER BY pm2.meta_value ASC";
+		$query .= " AND ".$wpdb->base_prefix."posts.post_status = 'publish' 
+					ORDER BY pm2.meta_value ASC";
 
 		$results = $wpdb->get_results( $query, OBJECT );
 
@@ -488,6 +489,11 @@ class Points_Of_Sale_Admin {
 				$content  = @$result->_pos_street . ", " . @$result->_pos_number . "<br/>";
 				$content .= @$result->_pos_city . " - " . @$result->_pos_state . "<br/>";
 				$content .= @$result->_pos_postal_code;
+				
+				$markers_url = rwmb_meta( '_pos_marker', 'type=image_advanced', $result->post_id );
+				
+				$icon_url 	 = end( $markers_url ); // LAST ITEM
+				$icon_url 	 = $icon_url['full_url'];				
 
 				$more_info = array();
 				if( isset($result->_pos_phone) ){
@@ -502,7 +508,7 @@ class Points_Of_Sale_Admin {
 								"name"		=> $result->post_title,
 								"content"	=> $content,
 								"more-info" => $more_info,
-								"icon_url"	=> $result->_pos_marker,
+								"icon_url"	=> ( !empty( $icon_url ) ) ? $icon_url : '',
 							    "lat"		=> $result->_pos_latitude,
 							    "lng"		=> $result->_pos_longitude
 							);

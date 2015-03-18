@@ -144,7 +144,7 @@ class Points_Of_Sale_Public {
 					        pm4.meta_value as _pos_street, 
 					        pm5.meta_value as _pos_number, 
 					        pm6.meta_value as _pos_postal_code, 
-					        pm7.meta_value as _pos_more_info, 
+					        pm7.meta_value as _pos_email, 
 					        pm8.meta_value as _pos_latitude, 
 				        	pm9.meta_value as _pos_longitude
 
@@ -195,8 +195,6 @@ class Points_Of_Sale_Public {
 
 	public function pos_localize_script(){
 		
-		global $post;
-
 		$data = array(
 					'ajaxurl' 	=> admin_url( 'admin-ajax.php' ),
 					'assetsurl' => plugin_dir_url( __FILE__ ),
