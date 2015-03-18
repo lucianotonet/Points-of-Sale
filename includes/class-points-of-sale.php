@@ -161,8 +161,8 @@ class Points_Of_Sale {
 		$plugin_admin = new Points_Of_Sale_Admin( $this->get_plugin_name(), $this->get_version() );
 
 
-		// $this->loader->add_action( 'wp_ajax_nopriv_getlocations', $plugin_admin, 'getlocations_callback' );
 		$this->loader->add_action( 'wp_ajax_getlocations', $plugin_admin, 'getlocations_callback' );
+		$this->loader->add_action( 'wp_ajax_nopriv_getlocations', $plugin_admin, 'getlocations_callback' );
 
 		
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_styles' );
