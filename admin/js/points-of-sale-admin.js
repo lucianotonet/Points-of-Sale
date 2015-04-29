@@ -30,6 +30,66 @@
 	 */
 
 	$(document).ready(function($) {
+
+		 
+	    // Init the font icon picker
+	    var pos_fonticonpicker = $(".pos_fonticonpicker").fontIconPicker();
+	 
+	    // Add the event on the button
+	    var pos_load_icons_onclick = function(e) {
+	        e.preventDefault();
+	 
+	        // Show processing message
+	        // $(this).prop('disabled', true).html('<i class="icon-cog demo-animate-spin"></i> Please wait...');
+	 
+	        // Get the JSON file
+	        $.ajax({
+	            url: pos_fonticonpicker_data.plugin_dir_path+'assets/icomoon/selection.json',
+	            type: 'GET',
+	            dataType: 'json'
+	        })
+	        .done(function(response) {
+
+	        	console.log( response );
+	 
+	            // Get the class prefix
+	            var classPrefix = response.preferences.fontPref.prefix,
+	                icomoon_json_icons = [],
+	                icomoon_json_search = [];
+	 
+	            // For each icon
+	            $.each(response.icons, function(i, v) {
+	 
+	                // Set the source
+	                icomoon_json_icons.push( classPrefix + v.properties.name );
+	 
+	                // Create and set the search source
+	                if ( v.icon && v.icon.tags && v.icon.tags.length ) {
+	                    icomoon_json_search.push( v.properties.name + ' ' + v.icon.tags.join(' ') );
+	                } else {
+	                    icomoon_json_search.push( v.properties.name );
+	                }
+	            });
+	 
+	            // Set new fonts on fontIconPicker
+	            pos_fonticonpicker.setIcons(icomoon_json_icons, icomoon_json_search);
+	 
+	            // Show success message and disable
+	            // $(this).removeClass('btn-primary').addClass('btn-success').text('Successfully loaded icons').prop('disabled', true);
+	 
+	        })
+	        .fail(function() {
+	            // Show error message and enable
+	            // $(this).removeClass('btn-primary').addClass('btn-danger').text('Error: Try Again?').prop('disabled', false);
+	        });
+	        e.stopPropagation();
+	    };
+	    $(".icons-selector .selector-button").on('click', pos_load_icons_onclick );
+	    // $( '.rwmb-input' ).on( 'clone', ':input.pos_fonticonpicker', pos_load_icons_onclick );
+
+
+
+
         
 		//Initialize Global Variables		
 		var marker;

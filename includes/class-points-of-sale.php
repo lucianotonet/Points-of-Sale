@@ -124,7 +124,7 @@ class Points_Of_Sale {
 		 * The class responsible for defining all actions that occur in the public-facing
 		 * side of the site.
 		 */
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/class-points-of-sale-public.php';		
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/class-points-of-sale-public.php';			
 
 
 		$this->loader = new Points_Of_Sale_Loader();
@@ -164,6 +164,15 @@ class Points_Of_Sale {
 		$this->loader->add_action( 'wp_ajax_getlocations', $plugin_admin, 'getlocations_callback' );
 		$this->loader->add_action( 'wp_ajax_nopriv_getlocations', $plugin_admin, 'getlocations_callback' );
 
+		$this->loader->add_action( 'wp_ajax_pos_getfilters', $plugin_admin, 'pos_getfilters_callback' );
+		$this->loader->add_action( 'wp_ajax_nopriv_pos_getfilters', $plugin_admin, 'pos_getfilters_callback' );
+
+		$this->loader->add_action( 'wp_ajax_pos_getpoints', $plugin_admin, 'pos_getpoints_callback' );
+		$this->loader->add_action( 'wp_ajax_nopriv_pos_getpoints', $plugin_admin, 'pos_getpoints_callback' );
+
+		
+		$this->loader->add_action( 'wp_ajax_pos_listpoints', $plugin_admin, 'pos_listpoints_callback' );
+		$this->loader->add_action( 'wp_ajax_nopriv_pos_listpoints', $plugin_admin, 'pos_listpoints_callback' );
 		
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_styles' );
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts' );
@@ -175,7 +184,7 @@ class Points_Of_Sale {
 		
 		$this->loader->add_filter( 'rwmb_meta_boxes', $plugin_admin, 'pos_register_meta_boxes' );
 
-		$this->loader->add_action( 'admin_init', $this, 'pos_register_poslocationpicker_field' );
+		$this->loader->add_action( 'admin_init', $this, 'pos_register_custom_fields' );
           
 	}
 
@@ -184,8 +193,9 @@ class Points_Of_Sale {
 	 * The class responsible for defining all actions that occur in the public-facing
 	 * side of the site.
 	 */
-	public function pos_register_poslocationpicker_field(){
+	public function pos_register_custom_fields(){
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-poslocationpicker-field.php';
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-possocial-field.php';
 	}
 
 	/**

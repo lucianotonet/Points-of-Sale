@@ -76,7 +76,12 @@ class Points_Of_Sale_Public {
 		wp_enqueue_style( $this->plugin_name.'_normalize', plugin_dir_url( __FILE__ ) . 'css/normalize.css', array(), $this->version, 'all' );
 		wp_enqueue_style( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'css/points-of-sale-public.css', array(), $this->version, 'all' );
 		wp_enqueue_style( $this->plugin_name.'_fonts', plugin_dir_url( __FILE__ ) . 'fonts/stylesheet.css', array(), $this->version, 'all' );
+		wp_enqueue_style( $this->plugin_name.'_pos_fonts', plugin_dir_url( __FILE__ ) . 'pos_fonts/stylesheet.css', array(), $this->version, 'all' );
+		
 		wp_enqueue_style( $this->plugin_name.'_selectric', plugin_dir_url( __FILE__ ) . 'css/jquery.selectric.css', array(), $this->version, 'all' );
+
+		wp_enqueue_style( $this->plugin_name.'_animate', plugin_dir_url( __FILE__ ) . 'css/animate.css', array(), $this->version, 'all' );
+		wp_enqueue_style( $this->plugin_name.'_fontawesome', '//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css', array(), $this->version, 'all' );
 
 	}
 
@@ -98,11 +103,8 @@ class Points_Of_Sale_Public {
 		 * between the defined hooks and the functions defined in this
 		 * class.
 		 */
+		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/points-of-sale-public.js', array( 'jquery' ), $this->version, false );						
 
-		wp_enqueue_script( $this->plugin_name.'_selectric', plugin_dir_url( __FILE__ ) . 'js/jquery.selectric.min.js', array( 'jquery' ), $this->version, false );
-		wp_enqueue_script( $this->plugin_name.'_gmaps', 'https://maps.googleapis.com/maps/api/js?v=3.exp', array( 'jquery' ), $this->version, false );
-		wp_enqueue_script( $this->plugin_name.'_infobox', plugin_dir_url( __FILE__ ) . 'js/infobox.min.js', array( 'jquery' ), $this->version, false );
-		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/points-of-sale-public.js', array( 'jquery' ), $this->version, false );
 
 		wp_localize_script( $this->plugin_name, 'pos_data', $this->pos_localize_script() );
 
@@ -120,14 +122,45 @@ class Points_Of_Sale_Public {
 		global $wpdb;
 			
 		// Attributes
-		extract( shortcode_atts(
+		$shortcode_attrs = shortcode_atts(
 			array(				    
-				'style'  => 'full_width',
+				'style'  => 'full_width', // full_width, view2
 				'width'  => '960',
 				'height' => '300',
-			), $atts )
-		);
+			), $atts );		
+
 		
+		/**
+		 * 	VIEWS
+		 */
+		switch ($shortcode_attrs['style']) {
+			case 'view2':
+				
+				wp_enqueue_style( $this->plugin_name.'_view2', plugin_dir_url( __FILE__ ) . 'view2/css/points-of-sale.css', array(), $this->version, 'all' );								
+				wp_enqueue_script( $this->plugin_name.'_view2_js', plugin_dir_url( __FILE__ ) . 'view2/js/points-of-sale.js', array( 'jquery' ), $this->version, false );
+				
+
+				//turn on output buffering to capture script output
+				ob_start();
+				//include the specified file
+				include_once(plugin_dir_path( __FILE__ ) . 'view2/points-of-sale-public-display.php');			
+				//assign the file output to $content variable and clean buffer
+				$content = ob_get_clean();
+
+
+				//return the $content
+				//return is important for the output to appear at the correct position
+				//in the content
+				return $content;			
+				break;
+			
+			default:
+				wp_enqueue_script( $this->plugin_name.'_selectric', plugin_dir_url( __FILE__ ) . 'js/jquery.selectric.min.js', array( 'jquery' ), $this->version, false );
+				wp_enqueue_script( $this->plugin_name.'_gmaps', 'https://maps.googleapis.com/maps/api/js?v=3.exp', array( 'jquery' ), $this->version, false );
+				wp_enqueue_script( $this->plugin_name.'_infobox', plugin_dir_url( __FILE__ ) . 'js/infobox.min.js', array( 'jquery' ), $this->version, false );
+				break;
+		}
+
 
 		/**
 		 * 
@@ -178,6 +211,8 @@ class Points_Of_Sale_Public {
 		include_once(plugin_dir_path( __FILE__ ) . 'partials/points-of-sale-public-display.php');			
 		//assign the file output to $content variable and clean buffer
 		$content = ob_get_clean();
+
+
 		//return the $content
 		//return is important for the output to appear at the correct position
 		//in the content
@@ -201,11 +236,81 @@ class Points_Of_Sale_Public {
 	}
 
 
+
+
 	public function pos_localize_script(){
+
+		global $wpdb;
+
+        
+
+		/**
+		 * 	VIEW 2
+		 */
+		//$states = array(
+		// 	"AC"=>"Acre",
+		// 	"AL"=>"Alagoas",
+		// 	"AM"=>"Amazonas",
+		// 	"AP"=>"Amapá",
+		// 	"BA"=>"Bahia",
+		// 	"CE"=>"Ceará",
+		// 	"DF"=>"Distrito Federal",
+		// 	"ES"=>"Espírito Santo",
+		// 	"GO"=>"Goiás",
+		// 	"MA"=>"Maranhão",
+		// 	"MT"=>"Mato Grosso",
+		// 	"MS"=>"Mato Grosso do Sul",
+		// 	"MG"=>"Minas Gerais",
+		// 	"PA"=>"Pará",
+		// 	"PB"=>"Paraíba",
+		// 	"PR"=>"Paraná",
+		// 	"PE"=>"Pernambuco",
+		// 	"PI"=>"Piauí",
+		// 	"RJ"=>"Rio de Janeiro",
+		// 	"RN"=>"Rio Grande do Norte",
+		// 	"RO"=>"Rondônia",
+		// 	"RS"=>"Rio Grande do Sul",
+		// 	"RR"=>"Roraima",
+		// 	"SC"=>"Santa Catarina",
+		// 	"SE"=>"Sergipe",
+		// 	"SP"=>"São Paulo",
+		// 	"TO"=>"Tocantins"
+		// );
+        // PDVS
+		$states = 	"SELECT pm1.meta_value as _pos_state,
+							pm2.meta_value as _pos_city
+					FROM 
+							".$wpdb->base_prefix."posts 
+
+					LEFT JOIN ".$wpdb->base_prefix."postmeta AS pm1 ON (".$wpdb->base_prefix."posts.ID = pm1.post_id AND pm1.meta_key='_pos_state')
+					LEFT JOIN ".$wpdb->base_prefix."postmeta AS pm2 ON (".$wpdb->base_prefix."posts.ID = pm2.post_id AND pm2.meta_key='_pos_city')
+
+					WHERE ".$wpdb->base_prefix."posts.post_type   	= 'point_of_sale' 
+					AND ".$wpdb->base_prefix."posts.post_status 	= 'publish' 	
+
+					GROUP BY _pos_state";
+
+		$states			= $wpdb->get_results( $states, ARRAY_A );
+		$total_stores 	= count($states);
+	
+		
+		/**
+         * 	LOADING
+         */
+		$loading = '<div class="pos_loading animated slideInLeft">
+						<div class="rect1"></div>
+						<div class="rect2"></div>
+						<div class="rect3"></div>
+						<div class="rect4"></div>
+						<div class="rect5"></div>
+					</div>';
+
 		
 		$data = array(
-					'ajaxurl' 	=> admin_url( 'admin-ajax.php' ),
-					'assetsurl' => plugin_dir_url( __FILE__ ),
+					'ajaxurl' 		=> admin_url( 'admin-ajax.php' ),
+					'assetsurl' 	=> plugin_dir_url( __FILE__ ),
+					'pos_states' 	=> $states,
+					'pos_loading'	=> $loading,
 				);
 		return $data;
 

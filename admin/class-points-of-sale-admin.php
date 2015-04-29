@@ -79,6 +79,13 @@ class Points_Of_Sale_Admin {
 
 		wp_enqueue_style( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'css/points-of-sale-admin.css', array(), $this->version, 'all' );
 
+		// FONTICONPICKER
+		wp_enqueue_style( $this->plugin_name . '_fonticonpicker', plugin_dir_url( __FILE__ ) . 'css/jquery.fonticonpicker.min.css', array(), $this->version, 'all' );
+		wp_enqueue_style( $this->plugin_name . '_fonticonpicker_theme', plugin_dir_url( __FILE__ ) . 'css/themes/grey-theme/jquery.fonticonpicker.grey.min.css', array(), $this->version, 'all' );
+
+		// ICOMOON
+		wp_enqueue_style( $this->plugin_name . '_icomoon', plugin_dir_url( dirname(__FILE__) ) . 'assets/icomoon/style.css', array(), $this->version, 'all' );
+
 	}
 
 	/**
@@ -120,6 +127,9 @@ class Points_Of_Sale_Admin {
         }
 
 		wp_enqueue_script( 'pos_locationpicker', plugin_dir_url( __FILE__ ) . 'js/locationpicker.jquery.min.js', array( 'jquery' ), $this->version, false  );			        
+		
+		wp_enqueue_script( 'pos_fonticonpicker', plugin_dir_url( __FILE__ ) . 'js/jquery.fonticonpicker.min.js', array( 'jquery' ), $this->version, false  );			        
+		wp_localize_script( 'pos_fonticonpicker', 'pos_fonticonpicker_data', $this->pos_localize_script() );			        
 		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/points-of-sale-admin.js', array( 'pos_google_maps', 'jquery' ), $this->version, false );
 
 		wp_localize_script( $this->plugin_name, 'pos_locationpicker_data', $this->pos_localize_script() );
@@ -184,7 +194,7 @@ class Points_Of_Sale_Admin {
 	            'menu_title'                      => __( 'Install Plugins', 'points-of-sale' ),
 	            'installing'                      => __( 'Installing Plugin: %s', 'points-of-sale' ),
 	            'oops'                            => __( 'Something went wrong with the plugin API.', 'points-of-sale' ),
-	            'notice_can_install_required'     => _n_noop( 'This theme requires the following plugin: %1$s.', 'This theme requires the following plugins: %1$s.' ),
+	            'notice_can_install_required'     => _n_noop( 'O plugin "Points of Sale" requer que o plugin %1$s esteja instalado.', 'This theme requires the following plugins: %1$s.' ),
 	            'notice_can_install_recommended'  => _n_noop( 'This theme recommends the following plugin: %1$s.', 'This theme recommends the following plugins: %1$s.' ),
 	            'notice_cannot_install'           => _n_noop( 'Sorry, but you do not have the correct permissions to install the %s plugin. Contact the administrator of this site for help on getting the plugin installed.', 'Sorry, but you do not have the correct permissions to install the %s plugins. Contact the administrator of this site for help on getting the plugins installed.' ),
 	            'notice_can_activate_required'    => _n_noop( 'The following required plugin is currently inactive: %1$s.', 'The following required plugins are currently inactive: %1$s.' ),
@@ -266,7 +276,7 @@ class Points_Of_Sale_Admin {
 		$prefix = '_pos_';
 
 		/**
-		 * Sample metabox to demonstrate each field type included
+		 *  META BOXES
 		 */
 		$meta_boxes[ 'pos_metabox' ] = array(
 			'id'         => 'pos_details_metabox',
@@ -329,6 +339,26 @@ class Points_Of_Sale_Admin {
                    				
 			),
 		);
+
+		
+
+		$meta_boxes[ 'pos_social' ] = array(
+			'id'         => 'pos_social_metabox',
+			'title'      => __( 'Dados de contato', 'points_of_sale' ),
+			'pages'      => $this->post_types_to_use, // Post type
+			'context'    => 'normal',
+			'priority'   => 'high',
+			'show_names' => false, // Show field names on the left			
+			'fields'     => array(			    
+                array(
+                		'name'  	=> __('Social','points_of_sale'),                		
+                		'id'    	=> $prefix . 'possocial2',
+                		'type'  	=> 'possocial',
+                		'clone' 	=> true,
+                		'multiple' 	=> false )    
+                   				
+			),
+		);
 		
 
 		// Add other metaboxes as needed
@@ -346,7 +376,6 @@ class Points_Of_Sale_Admin {
         $defaultEditMapLocationLat 	= '-28.3043001';	        
         $defaultEditMapLocationLong = '-52.3880269';	        
         $defaultEditMapZoom 		= '16';
-        // $defaultEditMapMarker 		= plugin_dir_path( __FILE__ ) ) . "assets/pos-marker.png";        
 		$defaultEditMapMarker 		= plugin_dir_url( dirname( __FILE__ ) ) . "assets/pos-marker.png";     
 		
 
@@ -356,10 +385,13 @@ class Points_Of_Sale_Admin {
 		// print_r( $markers );
 		// echo "</pre>";
 		// exit;
+        if($defaultEditMapMarker == '' ){
+            $defaultEditMapMarker = plugin_dir_path( __FILE__ ) . "assets/pos-marker.png";
+        }
 
 		if( !empty( $markers ) and is_array( $markers ) ){			
 			$marker 			  = end( $markers );
-			$defaultEditMapMarker = $marker['full_url'];
+			$defaultEditMapMarker = isset( $marker['full_url'] ) ? $marker['full_url'] : $defaultEditMapMarker ;
 		}
 
         if($defaultEditMapLocationLat == '' || $defaultEditMapLocationLong == ''){
@@ -371,17 +403,19 @@ class Points_Of_Sale_Admin {
             $defaultEditMapZoom = 4;
         }
 
-        if($defaultEditMapMarker == '' ){
-            $defaultEditMapMarker = plugin_dir_path( __FILE__ ) . "assets/pos-marker.png";
-        }
+
 
         $data = array(
 					'defaultEditMapLocationLat'  => $defaultEditMapLocationLat,
 					'defaultEditMapLocationLong' => $defaultEditMapLocationLong,
-					'defaultEditMapZoom'		 => $defaultEditMapZoom,
-					'defaultEditMapMarker'		 => $defaultEditMapMarker
+					'defaultEditMapZoom'		 => $defaultEditMapZoom,					
+					'defaultEditMapMarker'		 => $defaultEditMapMarker,
+
+					'plugin_dir_path'			 => plugin_dir_url( dirname(__FILE__) )
 				);
 
+
+        
         return $data;
         
 	}
@@ -523,5 +557,322 @@ class Points_Of_Sale_Admin {
 		wp_die(); // this is required to terminate immediately and return a proper response
 	}
 
+
+	
+
+
+	public function pos_getfilters_callback() {
+
+		global $wpdb;		
+		// $pos_response['_pos_debug'] = $_POST;
+		$pos_filter;
+		parse_str($_POST['pos_filter'], $pos_filter);
+
+		if( isset($pos_filter['pos_state']) ){
+			// return cities
+			$query = 	"SELECT pm1.meta_value as _pos_city
+
+						FROM ".$wpdb->base_prefix."posts 
+
+
+						LEFT JOIN ".$wpdb->base_prefix."postmeta AS pm1 ON (".$wpdb->base_prefix."posts.ID = pm1.post_id AND pm1.meta_key='_pos_city') 
+						LEFT JOIN ".$wpdb->base_prefix."postmeta AS pm2 ON (".$wpdb->base_prefix."posts.ID = pm2.post_id AND pm2.meta_key='_pos_state')
+
+						WHERE ".$wpdb->base_prefix."posts.post_type = 'point_of_sale'
+
+						AND pm2.meta_value = '".$pos_filter['pos_state']."'
+
+						GROUP BY _pos_city";			
+
+		}else
+		if( isset($pos_filter['pos_city']) ){
+			$query = 	"SELECT pm1.meta_value as _pos_neighborhood
+
+						FROM ".$wpdb->base_prefix."posts 
+
+
+						LEFT JOIN ".$wpdb->base_prefix."postmeta AS pm1 ON (".$wpdb->base_prefix."posts.ID = pm1.post_id AND pm1.meta_key='_pos_neighborhood') 
+						LEFT JOIN ".$wpdb->base_prefix."postmeta AS pm2 ON (".$wpdb->base_prefix."posts.ID = pm2.post_id AND pm2.meta_key='_pos_city')
+
+						WHERE ".$wpdb->base_prefix."posts.post_type = 'point_of_sale'
+
+						AND pm2.meta_value = '".$pos_filter['pos_city']."'
+
+						GROUP BY _pos_city";
+			
+		}else
+		if( isset($pos_filter['pos_neighborhood']) ){
+			// return POINTS OF SALE
+		}
+
+		$results = $wpdb->get_results( $query, ARRAY_A );
+		echo json_encode( $results );
+
+		wp_die();
+
+
+
+
+
+
+
+		$query = 	"SELECT *,
+
+			        pm1.meta_value as _pos_state, 
+			        pm2.meta_value as _pos_city,
+			        pm3.meta_value as _pos_neighborhood, 
+			        pm4.meta_value as _pos_street, 
+			        pm5.meta_value as _pos_number, 
+			        pm6.meta_value as _pos_postal_code, 		        
+			        pm7.meta_value as _pos_email, 
+			        pm8.meta_value as _pos_phone, 
+			        pm9.meta_value as _pos_marker,
+			        pm10.meta_value as _pos_latitude, 
+		        	pm11.meta_value as _pos_longitude
+					
+
+					FROM ".$wpdb->base_prefix."posts 
+
+
+					LEFT JOIN ".$wpdb->base_prefix."postmeta AS pm1 ON (".$wpdb->base_prefix."posts.ID = pm1.post_id AND pm1.meta_key='_pos_state') 
+					LEFT JOIN ".$wpdb->base_prefix."postmeta AS pm2 ON (".$wpdb->base_prefix."posts.ID = pm2.post_id AND pm2.meta_key='_pos_city')
+					LEFT JOIN ".$wpdb->base_prefix."postmeta AS pm3 ON (".$wpdb->base_prefix."posts.ID = pm3.post_id AND pm3.meta_key='_pos_neighborhood')
+					LEFT JOIN ".$wpdb->base_prefix."postmeta AS pm4 ON (".$wpdb->base_prefix."posts.ID = pm4.post_id AND pm4.meta_key='_pos_street')
+			        LEFT JOIN ".$wpdb->base_prefix."postmeta AS pm5 ON (".$wpdb->base_prefix."posts.ID = pm5.post_id AND pm5.meta_key='_pos_number')
+			        LEFT JOIN ".$wpdb->base_prefix."postmeta AS pm6 ON (".$wpdb->base_prefix."posts.ID = pm6.post_id AND pm6.meta_key='_pos_postal_code')
+			        LEFT JOIN ".$wpdb->base_prefix."postmeta AS pm7 ON (".$wpdb->base_prefix."posts.ID = pm7.post_id AND pm7.meta_key='_pos_email')
+			        LEFT JOIN ".$wpdb->base_prefix."postmeta AS pm8 ON (".$wpdb->base_prefix."posts.ID = pm8.post_id AND pm8.meta_key='_pos_phone')
+			        LEFT JOIN ".$wpdb->base_prefix."postmeta AS pm9 ON (".$wpdb->base_prefix."posts.ID = pm9.post_id AND pm9.meta_key='_pos_marker')
+			        LEFT JOIN ".$wpdb->base_prefix."postmeta AS pm10 ON (".$wpdb->base_prefix."posts.ID = pm10.post_id AND pm10.meta_key='_pos_latitude')
+		        	LEFT JOIN ".$wpdb->base_prefix."postmeta AS pm11 ON (".$wpdb->base_prefix."posts.ID = pm11.post_id AND pm11.meta_key='_pos_longitude')
+
+					WHERE ".$wpdb->base_prefix."posts.post_type = 'point_of_sale'";
+
+			
+		if( isset($city[0]['_pos_city'] ) AND !empty( $city[0]['_pos_city'] ) ){
+			if( !isset( $_POST['last_clicked'] ) || $_POST['last_clicked'] == 'states' ){				 
+				$query .= " AND pm1.meta_value 		 = '{$city[0]['_pos_state']}'";	
+			}else{
+				$query .= " AND pm2.meta_value 		 = '{$city[0]['_pos_city']}'";	
+			}
+		}
+
+
+		$query .= " AND ".$wpdb->base_prefix."posts.post_status = 'publish' 
+					ORDER BY pm2.meta_value ASC";
+
+		$results = $wpdb->get_results( $query, OBJECT );
+
+		echo json_encode( $pos_filter['pos_state'] );
+
+		wp_die(); // this is required to terminate immediately and return a proper response
+	}
+
+	public function pos_getpoints_callback() {
+
+		global $wpdb;
+		
+		/**
+		 * 	DROPDOWNS POPULATE
+		 */
+		if( empty( @$_POST['pos_state'] ) ){			
+			$query 	= 	"SELECT pm1.meta_value as _pos_state
+						FROM ".$wpdb->base_prefix."posts 
+						LEFT JOIN ".$wpdb->base_prefix."postmeta AS pm1 ON (".$wpdb->base_prefix."posts.ID = pm1.post_id AND pm1.meta_key='_pos_state') 
+						WHERE ".$wpdb->base_prefix."posts.post_type = 'point_of_sale'
+						GROUP BY _pos_state";	
+			$pos_filters['states'] = $wpdb->get_results( $query, OBJECT_K );
+		}else
+		if( empty( @$_POST['pos_city'] ) ){			
+			$query 	= 	"SELECT 		pm1.meta_value as _pos_city
+						FROM 			".$wpdb->base_prefix."posts 
+						LEFT JOIN 		".$wpdb->base_prefix."postmeta AS pm1 ON (".$wpdb->base_prefix."posts.ID = pm1.post_id AND pm1.meta_key='_pos_city') 
+						LEFT JOIN 		".$wpdb->base_prefix."postmeta AS pm2 ON (".$wpdb->base_prefix."posts.ID = pm2.post_id AND pm2.meta_key='_pos_state')
+						WHERE 			".$wpdb->base_prefix."posts.post_type = 'point_of_sale' AND pm2.meta_value = '".esc_sql( $_POST['pos_state'] )."'
+						AND 			".$wpdb->base_prefix."posts.post_status = 'publish' 						
+						GROUP BY 		_pos_city";	
+			$pos_filters['cities'] = $wpdb->get_results( $query, OBJECT_K );
+		}else
+		if( empty( @$_POST['pos_neighborhood'] ) ){			
+			$query 	= 	"SELECT pm1.meta_value as _pos_neighborhood
+						FROM ".$wpdb->base_prefix."posts 
+						LEFT JOIN ".$wpdb->base_prefix."postmeta AS pm1 ON (".$wpdb->base_prefix."posts.ID = pm1.post_id AND pm1.meta_key='_pos_neighborhood') 
+						LEFT JOIN ".$wpdb->base_prefix."postmeta AS pm2 ON (".$wpdb->base_prefix."posts.ID = pm2.post_id AND pm2.meta_key='_pos_city')
+						WHERE ".$wpdb->base_prefix."posts.post_type = 'point_of_sale'
+						AND pm2.meta_value = '".esc_sql( $_POST['pos_city'] )."'
+						GROUP BY _pos_neighborhood";	
+			$pos_filters['neighborhoods'] = $wpdb->get_results( $query, OBJECT_K );
+		}
+
+
+		// LISTAR OS PONTOS DE VENDA
+		// BASEADO NOS FILTROS ACIMA
+		if( @$_POST['pos_show_points'] ){
+			$query = 	"SELECT *, post_title,
+
+				        pm1.meta_value as _pos_state, 
+				        pm2.meta_value as _pos_city,
+				        pm3.meta_value as _pos_neighborhood, 
+				        pm4.meta_value as _pos_street, 
+				        pm5.meta_value as _pos_number, 
+				        pm6.meta_value as _pos_postal_code, 		        
+				        pm7.meta_value as _pos_email, 
+				        pm8.meta_value as _pos_phone, 
+				        pm9.meta_value as _pos_marker,
+				        pm10.meta_value as _pos_latitude, 
+			        	pm11.meta_value as _pos_longitude
+						
+
+						FROM ".$wpdb->base_prefix."posts 
+
+
+						LEFT JOIN ".$wpdb->base_prefix."postmeta AS pm1 ON (".$wpdb->base_prefix."posts.ID = pm1.post_id AND pm1.meta_key='_pos_state') 
+						LEFT JOIN ".$wpdb->base_prefix."postmeta AS pm2 ON (".$wpdb->base_prefix."posts.ID = pm2.post_id AND pm2.meta_key='_pos_city')
+						LEFT JOIN ".$wpdb->base_prefix."postmeta AS pm3 ON (".$wpdb->base_prefix."posts.ID = pm3.post_id AND pm3.meta_key='_pos_neighborhood')
+						LEFT JOIN ".$wpdb->base_prefix."postmeta AS pm4 ON (".$wpdb->base_prefix."posts.ID = pm4.post_id AND pm4.meta_key='_pos_street')
+				        LEFT JOIN ".$wpdb->base_prefix."postmeta AS pm5 ON (".$wpdb->base_prefix."posts.ID = pm5.post_id AND pm5.meta_key='_pos_number')
+				        LEFT JOIN ".$wpdb->base_prefix."postmeta AS pm6 ON (".$wpdb->base_prefix."posts.ID = pm6.post_id AND pm6.meta_key='_pos_postal_code')
+				        LEFT JOIN ".$wpdb->base_prefix."postmeta AS pm7 ON (".$wpdb->base_prefix."posts.ID = pm7.post_id AND pm7.meta_key='_pos_email')
+				        LEFT JOIN ".$wpdb->base_prefix."postmeta AS pm8 ON (".$wpdb->base_prefix."posts.ID = pm8.post_id AND pm8.meta_key='_pos_phone')
+				        LEFT JOIN ".$wpdb->base_prefix."postmeta AS pm9 ON (".$wpdb->base_prefix."posts.ID = pm9.post_id AND pm9.meta_key='_pos_marker')
+				        LEFT JOIN ".$wpdb->base_prefix."postmeta AS pm10 ON (".$wpdb->base_prefix."posts.ID = pm10.post_id AND pm10.meta_key='_pos_latitude')
+			        	LEFT JOIN ".$wpdb->base_prefix."postmeta AS pm11 ON (".$wpdb->base_prefix."posts.ID = pm11.post_id AND pm11.meta_key='_pos_longitude')
+
+						WHERE ".$wpdb->base_prefix."posts.post_type = 'point_of_sale'";
+
+				
+			if( isset( $_POST['pos_state'] ) AND !empty( $_POST['pos_state'] ) ){
+							
+					$query .= " AND pm1.meta_value 		 = '".$_POST['pos_state']."'";					
+			}
+			if( isset( $_POST['pos_city'] ) AND !empty( $_POST['pos_city'] ) ){
+							
+					$query .= " AND pm2.meta_value 		 = '".$_POST['pos_city']."'";					
+			}
+			if( isset( $_POST['pos_neighborhood'] ) AND !empty( $_POST['pos_neighborhood'] ) ){
+							
+					$query .= " AND pm3.meta_value 		 = '".$_POST['pos_neighborhood']."'";					
+			}
+
+
+			$query .= " AND ".$wpdb->base_prefix."posts.post_status = 'publish' 
+						ORDER BY pm2.meta_value ASC";
+
+			$pos_filters['points_of_sale'] = $wpdb->get_results( $query, ARRAY_A );
+
+		}
+		
+		echo json_encode( $pos_filters );
+
+		wp_die(); // this is required to terminate immediately and return a proper response
+	}
+
+
+
+
+	public function pos_listpoints_callback(){
+		global $wpdb;
+		// LISTAR OS PONTOS DE VENDA
+		// BASEADO NOS FILTROS
+		$query = 	"SELECT *, post_title,
+
+			        pm1.meta_value as _pos_state, 
+			        pm2.meta_value as _pos_city,
+			        pm3.meta_value as _pos_neighborhood, 
+			        pm4.meta_value as _pos_street, 
+			        pm5.meta_value as _pos_number, 
+			        pm6.meta_value as _pos_postal_code, 		        
+			        pm7.meta_value as _pos_email, 
+			        pm8.meta_value as _pos_phone, 
+			        pm9.meta_value as _pos_marker,
+			        pm10.meta_value as _pos_latitude, 
+		        	pm11.meta_value as _pos_longitude,
+		        	pm12.meta_value as _pos_more_info
+					
+
+					FROM ".$wpdb->base_prefix."posts 
+
+
+					LEFT JOIN ".$wpdb->base_prefix."postmeta AS pm1 ON (".$wpdb->base_prefix."posts.ID = pm1.post_id AND pm1.meta_key='_pos_state') 
+					LEFT JOIN ".$wpdb->base_prefix."postmeta AS pm2 ON (".$wpdb->base_prefix."posts.ID = pm2.post_id AND pm2.meta_key='_pos_city')
+					LEFT JOIN ".$wpdb->base_prefix."postmeta AS pm3 ON (".$wpdb->base_prefix."posts.ID = pm3.post_id AND pm3.meta_key='_pos_neighborhood')
+					LEFT JOIN ".$wpdb->base_prefix."postmeta AS pm4 ON (".$wpdb->base_prefix."posts.ID = pm4.post_id AND pm4.meta_key='_pos_street')
+			        LEFT JOIN ".$wpdb->base_prefix."postmeta AS pm5 ON (".$wpdb->base_prefix."posts.ID = pm5.post_id AND pm5.meta_key='_pos_number')
+			        LEFT JOIN ".$wpdb->base_prefix."postmeta AS pm6 ON (".$wpdb->base_prefix."posts.ID = pm6.post_id AND pm6.meta_key='_pos_postal_code')
+			        LEFT JOIN ".$wpdb->base_prefix."postmeta AS pm7 ON (".$wpdb->base_prefix."posts.ID = pm7.post_id AND pm7.meta_key='_pos_email')
+			        LEFT JOIN ".$wpdb->base_prefix."postmeta AS pm8 ON (".$wpdb->base_prefix."posts.ID = pm8.post_id AND pm8.meta_key='_pos_phone')
+			        LEFT JOIN ".$wpdb->base_prefix."postmeta AS pm9 ON (".$wpdb->base_prefix."posts.ID = pm9.post_id AND pm9.meta_key='_pos_marker')
+			        LEFT JOIN ".$wpdb->base_prefix."postmeta AS pm10 ON (".$wpdb->base_prefix."posts.ID = pm10.post_id AND pm10.meta_key='_pos_latitude')
+		        	LEFT JOIN ".$wpdb->base_prefix."postmeta AS pm11 ON (".$wpdb->base_prefix."posts.ID = pm11.post_id AND pm11.meta_key='_pos_longitude')
+		        	LEFT JOIN ".$wpdb->base_prefix."postmeta AS pm12 ON (".$wpdb->base_prefix."posts.ID = pm12.post_id AND pm12.meta_key='_pos_more_info')
+
+					WHERE ".$wpdb->base_prefix."posts.post_type = 'point_of_sale'";
+
+			
+					if( isset( $_POST['pos_state'] ) AND !empty( $_POST['pos_state'] ) ){
+									
+							$query .= " AND pm1.meta_value 		 = '".$_POST['pos_state']."'";					
+					}
+					if( isset( $_POST['pos_city'] ) AND !empty( $_POST['pos_city'] ) ){
+									
+							$query .= " AND pm2.meta_value 		 = '".$_POST['pos_city']."'";					
+					}
+					if( isset( $_POST['pos_neighborhood'] ) AND !empty( $_POST['pos_neighborhood'] ) ){
+									
+							$query .= " AND pm3.meta_value 		 = '".$_POST['pos_neighborhood']."'";					
+					}
+
+
+		$query .= " AND ".$wpdb->base_prefix."posts.post_status = 'publish' 
+					ORDER BY pm2.meta_value ASC";
+
+		$points_of_sale = $wpdb->get_results( $query, OBJECT );
+
+		// echo "<pre>";
+		// print_r($points_of_sale);
+		// echo "</pre>";
+		// exit;
+
+
+		/**
+		 * 	ICON DEFAULT
+		 */
+		$pos_marker	= array(
+							"url"	 	=> plugin_dir_url( dirname( __FILE__ ) ) . "assets/pos-marker.png",
+							"full_url" 	=> plugin_dir_url( dirname( __FILE__ ) ) . "assets/pos-marker.png",
+							"title"		=> "Point of Sale",
+							"width"		=> 81,
+							"height"	=> 90,
+							"alt"		=> "",
+						);
+		
+
+
+
+
+		//turn on output buffering to capture script output		
+		ob_start();
+		// $content = "";
+
+
+		foreach ($points_of_sale as $point_of_sale) {			
+			$point_of_sale->_pos_marker = rwmb_meta( '_pos_marker', 'type=image_advanced&size=thumbnail', $point_of_sale->ID );
+			
+						
+			//include the specified file
+			include plugin_dir_path( dirname( __FILE__ ) ) . 'public/view2/points-of-sale_list-item.php';				
+		}		
+		
+		//assign the file output to $content variable and clean buffer
+		$content = ob_get_clean();
+
+
+		//return the $content
+		//return is important for the output to appear at the correct position
+		//in the content
+		echo $content;	
+
+		wp_die();
+	}
 
 }
