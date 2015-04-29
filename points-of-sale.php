@@ -9,8 +9,8 @@
  *
  * @wordpress-plugin
  * Plugin Name:       Points Of Sale
- * Plugin URI:        https://
- * Description:       Simple Google maps integration to display the points of sale where your costumers can find your products. Filters by States, Cities and Neighborhoods.
+ * Plugin URI:        https://github.com/tonetlds/Points-of-Sale
+ * Description:       Show the points of sale where your costumers can find your products. Filters by States, Cities and Neighborhoods.
  * Version:           1.1
  * Author:            Luciano Tonet
  * Author URI:        https://github.com/tonetlds
@@ -47,10 +47,10 @@ function deactivate_points_of_sale() {
  * The code that runs during plugin updating.
  * This action is documented in includes/class-points-of-sale-updater.php
  */
-function update_points_of_sale() {
-	require_once plugin_dir_path( __FILE__ ) . 'includes/class-points-of-sale-updater.php';
-	Points_Of_Sale_Updater::update();
-}
+// function update_points_of_sale() {
+// 	require_once plugin_dir_path( __FILE__ ) . 'includes/class-points-of-sale-updater.php';
+// 	Points_Of_Sale_Updater::update();
+// }
 
 register_activation_hook( __FILE__, 'activate_points_of_sale' );
 register_deactivation_hook( __FILE__, 'deactivate_points_of_sale' );

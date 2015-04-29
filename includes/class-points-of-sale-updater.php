@@ -23,7 +23,7 @@ class Points_Of_Sale_Updater {
 	public function __construct() {
 
 		$this->load_dependencies();
-		$this->update();
+		// $this->update();
 	
 	}
 
@@ -53,6 +53,7 @@ class Points_Of_Sale_Updater {
 	 * @since    1.0.0
 	 */
 	public static function update() {
+		
 		if (is_admin()) { // note the use of is_admin() to double check that this is happening in the admin
 		    $config = array(
 		        'slug' 					=> plugin_basename(__FILE__), // this is the slug of your plugin
@@ -67,8 +68,7 @@ class Points_Of_Sale_Updater {
 		        'readme' 				=> 'README.MD' // which file to use as the readme for the version number
 		    );
 		    new WPGitHubUpdater($config);
-		}
-		return "Funcionou";
+		}		
 
 	}
 
