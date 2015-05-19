@@ -56,17 +56,7 @@ class Points_Of_Sale_Admin {
 		$this->plugin_name = $plugin_name;
 		$this->version = $version;
 
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/WordPress-GitHub-Plugin-Updater-master/updater.php';
-		if (is_admin()) { // note the use of is_admin() to double check that this is happening in the admin
-		    $config = array(
-		        'slug' 					=> plugin_basename(__FILE__), // this is the slug of your plugin
-		        'proper_folder_name' 	=> 'points-of-sale', // this is the name of the folder your plugin lives in
-		        'readme' 				=> 'README.MD' // which file to use as the readme for the version number
-		    );
-		    new WPGitHubUpdater($config);
-		}	
-
-
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/WordPress-GitHub-Plugin-Updater/updater.php';
 		if (is_admin()) { // note the use of is_admin() to double check that this is happening in the admin
         $config = array(
             'slug' 					=> plugin_basename(__FILE__), // this is the slug of your plugin
