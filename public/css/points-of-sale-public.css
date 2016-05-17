@@ -119,7 +119,7 @@
 
 
 .selectricItems {    
-    overflow: visible !important;    
+    overflow: scroll;    
 }
 
 /*RESPONSIVENESS*/
